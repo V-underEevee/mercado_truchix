@@ -29,7 +29,7 @@ Este proyecto fue desarrollado como trabajo práctico final para la materia **Ba
 Sigue estos pasos para levantar el proyecto en tu máquina:
 
 1. Clona el repositorio:
-   `git clone https://github.com/TU_USUARIO/mercado_truchix.git`
+   `git clone https://github.com/V-underEevee/mercado_truchix.git`
 2. Copia la carpeta en `C:\xampp\htdocs\` y renómbrala a `Mercado_Truchix`.
 3. Importa el archivo `sql/mercado_truchix.sql` en tu phpMyAdmin.
 4. Abre en tu navegador: `http://localhost/Mercado_Truchix/`
