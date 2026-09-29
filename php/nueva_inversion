@@ -1,0 +1,67 @@
+<?php
+require_once '../config/conexion.php';
+
+$mensaje = "";
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id_usuario = $_POST['id_usuario'];
+    $id_tipo = $_POST['id_tipo'];
+    $monto = $_POST['monto'];
+    $dias = $_POST['dias'];
+
+    $stmt = $conexion->prepare("CALL sp_crear_inversion(?, ?, ?, ?)");
+    $stmt->bind_param("iidi", $id_usuario, $id_tipo, $monto, $dias);
+
+    if ($stmt->execute()) {
+        $r = $stmt->get_result();
+        $fila = $r->fetch_assoc();
+        $mensaje = "<div class='mensaje-ok'>" . $fila['mensaje'] . " - Rendimiento estimado: $" . number_format($fila['rendimiento_estimado'], 2, ',', '.') . "</div>";
+    } else {
+        $mensaje = "<div class='mensaje-error'>Error: " . $stmt->error . "</div>";
+    }
+    $stmt->close();
+}
+
+$usuarios = $conexion->query("SELECT id_usuario, nombre, apellido FROM usuario WHERE estado = 'activo'");
+$tipos = $conexion->query("SELECT id_tipo_inversion, nombre, tasa_anual, riesgo FROM tipo_inversion WHERE estado = 'activo'");
+
+include_once '../components/header.php';
+?>
+
+<h2>Nueva inversión</h2>
+<?php echo $mensaje; ?>
+
+<form method="POST" action="">
+    <label>Usuario:</label>
+    <select name="id_usuario" required>
+        <option value="">Seleccioná un usuario</option>
+        <?php while ($u = $usuarios->fetch_assoc()): ?>
+            <option value="<?php echo $u['id_usuario']; ?>">
+                <?php echo htmlspecialchars($u['nombre'] . ' ' . $u['apellido']); ?>
+            </option>
+        <?php endwhile; ?>
+    </select>
+
+    <label>Tipo de inversión:</label>
+    <select name="id_tipo" required>
+        <option value="">Seleccioná un tipo</option>
+        <?php while ($t = $tipos->fetch_assoc()): ?>
+            <option value="<?php echo $t['id_tipo_inversion']; ?>">
+                <?php echo htmlspecialchars($t['nombre'] . ' - ' . $t['riesgo'] . ' - ' . $t['tasa_anual'] . '%'); ?>
+            </option>
+        <?php endwhile; ?>
+    </select>
+
+    <label>Monto a invertir (mínimo 1000):</label>
+    <input type="number" step="0.01" name="monto" min="1000" required>
+
+    <label>Días de duración:</label>
+    <input type="number" name="dias" value="30" min="1" required>
+
+    <input type="submit" value="Invertir">
+</form>
+
+<?php
+$conexion->close();
+include '../components/footer.php';
+?>

@@ -1,0 +1,14 @@
+# Archivos de configuración sensible
+.env
+config/conexion.php
+
+# Archivos de sistema y temporales
+.DS_Store
+Thumbs.db
+*.log
+
+# Dependencias y editores (si usás algunas en el futuro)
+vendor/
+node_modules/
+.idea/
+.vscode/
